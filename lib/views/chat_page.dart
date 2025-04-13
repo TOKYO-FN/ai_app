@@ -16,9 +16,7 @@ class _ChatPageState extends State<ChatPage> {
   final gemini = GeminiService();
 
   Future<String> getReplyFromAI(String message) async {
-    String userMessage = message;
-    String reply = await gemini.getChatbotResponse(userMessage);
-    return reply;
+    return await gemini.getChatbotResponse(message);
   }
 
   CollectionReference messages = FirebaseFirestore.instance.collection(
@@ -31,9 +29,27 @@ class _ChatPageState extends State<ChatPage> {
 
   TextEditingController controller = TextEditingController();
 
+  Future<void> deleteCollection() async {
+    final collection = FirebaseFirestore.instance.collection(
+      kMessagesCollection,
+    );
+
+    final snapshots = await collection.get();
+
+    for (final doc in snapshots.docs) {
+      await doc.reference.delete();
+    }
+  }
+
   bool isArabic(String text) {
     final RegExp arabicRegex = RegExp(r'[\u0600-\u06FF]');
     return arabicRegex.hasMatch(text);
+  }
+
+  @override
+  void dispose() {
+    deleteCollection();
+    super.dispose();
   }
 
   @override
@@ -60,9 +76,9 @@ class _ChatPageState extends State<ChatPage> {
               title: Text("AI Chat"),
               actions: [
                 IconButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await deleteCollection();
                     messageList = [];
-
                     setState(() {});
                   },
                   icon: Icon(Icons.delete),
