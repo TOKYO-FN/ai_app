@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class GeminiService {
-  final String _apiKey = 'AIzaSyAs8ZS7433c10CsR7dNKNo3ohFB8S2J8RI';
+  final String _apiKey = 'AIzaSyABx7R_S28H-Wnb0RbrJnzRt63A9ExuEyY';
   final Dio _dio = Dio();
 
   Future<String> getChatbotResponse(String prompt) async {
